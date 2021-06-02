@@ -23,7 +23,7 @@ PyMySQL==0.9.3
 pyOpenSSL==19.1.0
 requests==2.22.0
 six==1.13.0
-urllib3==1.25.7
+urllib3==1.26.5
 Werkzeug==0.16.0
 wrapt==1.11.2
 yubico-client==1.12.0
