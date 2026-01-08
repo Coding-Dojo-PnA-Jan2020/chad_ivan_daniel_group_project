@@ -24,6 +24,6 @@ pyOpenSSL==19.1.0
 requests==2.32.4
 six==1.13.0
 urllib3==2.6.3
-Werkzeug==2.2.3
+Werkzeug==3.1.4
 wrapt==1.11.2
 yubico-client==1.12.0
