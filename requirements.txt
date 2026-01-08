@@ -19,7 +19,7 @@ mccabe==0.6.1
 pycodestyle==2.5.0
 pycparser==2.19
 pylint==2.4.4
-PyMySQL==0.9.3
+PyMySQL==1.1.1
 pyOpenSSL==19.1.0
 requests==2.32.4
 six==1.13.0
