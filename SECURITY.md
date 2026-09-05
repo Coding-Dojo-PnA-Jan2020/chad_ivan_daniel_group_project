@@ -27,6 +27,7 @@ You can expect a response within **7 days**. Please include:
 | Uploads | Magic-byte + full decode validation, Pillow re-encode, random names, 2 MB cap, optional by design |
 | Access control | `@login_required` everywhere private; ownership checks server-side (403 not 404) |
 | Dependencies | Minimal pin list, `pip-audit` gate in CI, grouped weekly Dependabot updates |
+| Containers | Multi-stage Dockerfile, non-root user, Trivy image + filesystem + misconfig scans gate CI; container smoke-tested on every PR |
 
 ## 🔁 Secret rotation
 
