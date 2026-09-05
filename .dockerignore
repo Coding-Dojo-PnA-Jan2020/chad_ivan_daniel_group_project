@@ -1,0 +1,20 @@
+# Never bake these into the image
+.git
+.github
+.venv
+.env
+.zcode
+archive/
+tests/
+app/static/uploads/
+**/__pycache__/
+*.pyc
+*.db
+*.sqlite
+whisper_local.db
+.pytest_cache/
+.ruff_cache/
+Dockerfile
+.dockerignore
+README.md
+SECURITY.md
