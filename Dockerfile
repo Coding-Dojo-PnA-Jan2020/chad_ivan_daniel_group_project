@@ -8,10 +8,8 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
 
 WORKDIR /build
 COPY requirements.txt .
-# setuptools upgraded past CVE-2025-47273 (base image ships a vulnerable version)
 RUN python -m venv /opt/venv \
-    && /opt/venv/bin/pip install -r requirements.txt \
-    && /opt/venv/bin/pip install --no-cache-dir -U setuptools
+    && /opt/venv/bin/pip install -r requirements.txt
 
 # ---- runtime stage: minimal image, non-root user -------------------------
 FROM python:3.13-slim
@@ -28,8 +26,7 @@ ENV PATH="/opt/venv/bin:$PATH" \
 # Production config refuses to start without a real SECRET_KEY — always pass
 # one (see README). SQLite works in-container for demos; mount a volume or
 # point DATABASE_URL at MySQL for anything persistent.
-RUN groupadd --system whisper && useradd --system --gid whisper --create-home whisper \
-    && pip install --no-cache-dir -U setuptools
+RUN groupadd --system whisper && useradd --system --gid whisper --create-home whisper
 
 WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv

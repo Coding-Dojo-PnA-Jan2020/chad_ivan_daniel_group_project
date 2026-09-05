@@ -15,5 +15,3 @@ Pillow==12.3.0
 gunicorn==23.0.0
 PyMySQL==1.1.2
 python-dotenv==1.2.2
-# Transitive via Flask-Limiter/limits — pinned past GHSA-6v7p-g79w-8964
-msgpack==1.2.1

@@ -1,3 +1,13 @@
-# Trivy suppressions — add one vulnerability ID per line, with a reason.
-# Example:
-# CVE-2026-12345  # false positive: vulnerable function not reachable from our usage
+# Trivy suppressions — one vulnerability ID per line, each with a reason.
+# Revisit these whenever the underlying package or its usage changes.
+#
+# The two entries below are reported for pip's VENDORED copies
+# (pip/_vendor/vendor.txt), not for our application dependencies:
+#   - GHSA-6v7p-g79w-8964  → pip vendors msgpack 1.1.2 (CacheControl dep)
+#   - CVE-2025-47273       → pip vendors setuptools 70.3.0 (build isolation)
+# The production container never executes pip, and the vendored code is not
+# reachable from the app. Real application dependencies are still audited by
+# pip-audit in the `test` job, and Dependabot keeps pip itself fresh via the
+# base image.
+GHSA-6v7p-g79w-8964
+CVE-2025-47273
