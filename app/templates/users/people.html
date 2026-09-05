@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Ninjas — Whisper 🤫{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Ninjas to follow 🥷</h1>
+<div class="row g-3">
+  {% for user in users %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm whisper-card h-100">
+        <div class="card-body d-flex align-items-center">
+          <img src="{{ user | avatar }}" class="rounded-circle me-3" width="56" height="56" alt="">
+          <div class="flex-grow-1">
+            <a href="{{ url_for('users.profile', user_id=user.id) }}" class="fw-semibold text-decoration-none">
+              {{ user.full_name }}
+            </a>
+            <div class="text-muted small">{{ user.bio or '' }}</div>
+          </div>
+          <form method="post" action="{{ url_for('users.unfollow' if current_user.is_following(user) else 'users.follow', user_id=user.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm {{ 'btn-outline-secondary' if current_user.is_following(user) else 'btn-primary' }}">
+              {{ 'Following ✓' if current_user.is_following(user) else 'Follow' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted">Everyone's already in your circle! 🎉</p>
+  {% endfor %}
+</div>
+{% endblock %}

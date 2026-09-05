@@ -2,3 +2,18 @@ __pycache__/
 *env/
 *.pyc
 *.mwb.bak
+
+# Secrets & local state — never commit these
+.env
+whisper_local.db
+*.db
+*.sqlite
+
+# Uploaded avatars
+app/static/uploads/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.venv/
+.zcode/
