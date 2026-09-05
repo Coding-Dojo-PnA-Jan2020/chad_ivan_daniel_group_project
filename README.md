@@ -56,6 +56,21 @@ export DATABASE_URL="mysql+pymysql://whisper:password@localhost:3306/whisper"
 flask --app wsgi db upgrade     # create the schema via migrations
 ```
 
+### 🐳 Running with Docker
+
+```bash
+docker build -t whisper .
+docker run --rm -p 8000:8000 \
+  -e SECRET_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')" \
+  whisper
+```
+
+Open **http://localhost:8000** 🎉 — the image is a multi-stage build on
+`python:3.13-slim`, runs as a **non-root user**, serves via **gunicorn**, and
+ships with a `HEALTHCHECK` hitting the public `GET /health` endpoint.
+CI builds this exact image, boots it, smoke-tests it, and scans it with
+Trivy before any change can merge.
+
 ## ⚙️ Configuration
 
 All configuration comes from the environment (or a `.env` file — see
@@ -87,9 +102,10 @@ All configuration comes from the environment (or a `.env` file — see
 │   ├── templates/       # 🎨 Jinja2 + Bootstrap 5
 │   └── static/
 ├── migrations/          # 🧬 Alembic migrations (flask db …)
-├── tests/               # ✅ pytest suite (36 tests)
+├── tests/               # ✅ pytest suite (37 tests)
 ├── archive/             # 📦 the original 2020 bootcamp code (do not run!)
-├── .github/workflows/   # 🤖 CI: lint + tests + dependency audit
+├── .github/workflows/   # 🤖 CI: lint + tests + audits + Trivy + Docker build
+├── Dockerfile           # 🐳 multi-stage, non-root, gunicorn
 └── wsgi.py              # 🚪 entry point
 ```
 
@@ -130,15 +146,21 @@ Dependabot alerts used to pile up because this repo pinned 29 packages from
 1. **Minimal dependency surface** — 15 direct runtime packages, each one
    load-bearing. Fewer packages ⇒ fewer alerts.
 2. **CI gate** ([ci.yml](.github/workflows/ci.yml)) — every push runs
-   `ruff` + `pytest` + **`pip-audit`**, and the build *fails* on any known
-   CVE before it can be merged. Alerts are caught pre-merge, not discovered
-   post-deploy.
+   `ruff` + `pytest` + **`pip-audit`**, plus:
+   - 🔍 **Trivy filesystem scan** — secrets & IaC misconfig detection
+   - 🐳 **Docker build + boot smoke test** — the container must actually
+     start and answer `/health`
+   - 🔍 **Trivy image scan** — the build **fails** on any CRITICAL/HIGH CVE
+     in the base image or installed packages
 3. **Dependabot, de-noised** ([dependabot.yml](.github/dependabot.yml)) —
    weekly grouped minor/patch PRs (one reviewable PR instead of 15 alerts);
    major bumps still arrive individually.
+4. **Self-merging maintenance** ([dependabot-auto-merge.yml](.github/workflows/dependabot-auto-merge.yml)) —
+   the grouped minor/patch PRs auto-squash-merge once the *entire* CI
+   pipeline is green. You only ever look at major bumps.
 
 So the maintenance loop is: Dependabot opens a grouped PR → CI validates it →
-merge. Done. 🧹
+it merges itself. Majors arrive individually for a human. Done. 🧹
 
 ### Running the checks yourself
 
@@ -151,7 +173,7 @@ pip-audit -r requirements.txt -r requirements-dev.txt
 
 ## 🧪 Tests
 
-36 pytest tests cover the security-critical paths:
+37 pytest tests cover the security-critical paths:
 
 - crypto round-trips, per-user key isolation, garbage-token handling
 - register/login/logout, duplicate email, weak password, reset-token expiry

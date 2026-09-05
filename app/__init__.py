@@ -54,6 +54,11 @@ def create_app(config_object: str | None = None) -> Flask:
     register_error_handlers(app)
     register_template_globals(app)
 
+    @app.route("/health")
+    def health():
+        """Liveness probe for Docker HEALTHCHECK / load balancers — public by design."""
+        return {"status": "ok"}
+
     return app
 
 

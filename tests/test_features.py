@@ -88,6 +88,13 @@ class TestBioAndProfile:
         assert b"John Smith" in resp.data
 
 
+class TestHealth:
+    def test_health_public(self, client):
+        resp = client.get("/health")
+        assert resp.status_code == 200
+        assert resp.get_json() == {"status": "ok"}
+
+
 class TestAvatar:
     def _png_bytes(self):
         import io
