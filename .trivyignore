@@ -1,0 +1,3 @@
+# Trivy suppressions — add one vulnerability ID per line, with a reason.
+# Example:
+# CVE-2026-12345  # false positive: vulnerable function not reachable from our usage
