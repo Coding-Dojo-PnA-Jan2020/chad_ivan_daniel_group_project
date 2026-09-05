@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.full_name }} — Whisper 🤫{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card shadow-sm whisper-card text-center">
+      <div class="card-body p-4">
+        <img src="{{ profile_user | avatar }}" class="rounded-circle mb-3" width="112" height="112" alt="">
+        <h1 class="h4">{{ profile_user.full_name }}</h1>
+        <p class="text-muted">{{ profile_user.bio or "No bio yet." }}</p>
+        <p class="small text-muted mb-2">
+          <strong>{{ followers }}</strong> followers · <strong>{{ following }}</strong> following
+        </p>
+        {% if profile_user.id == current_user.id %}
+          <form method="post" action="{{ url_for('users.update_bio') }}" class="text-start">
+            {{ bio_form.csrf_token }}
+            <label class="form-label fw-semibold" for="bio">Your bio ✍️</label>
+            <textarea class="form-control mb-2" id="bio" name="bio" rows="3" maxlength="500">{{ bio_form.bio.data or '' }}</textarea>
+            <button class="btn btn-primary btn-sm w-100">Save bio</button>
+          </form>
+          <hr>
+          <form method="post" action="{{ url_for('users.upload_avatar') }}" enctype="multipart/form-data" class="text-start">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label class="form-label fw-semibold" for="file">Avatar 🖼️</label>
+            <input class="form-control form-control-sm mb-2" type="file" id="file" name="file" accept="image/jpeg,image/png,image/webp">
+            <div class="form-text">JPEG/PNG/WebP, max 2 MB.</div>
+            <button class="btn btn-outline-primary btn-sm w-100">Upload avatar</button>
+          </form>
+        {% else %}
+          <form method="post" action="{{ url_for('users.unfollow' if is_following else 'users.follow', user_id=profile_user.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn {{ 'btn-outline-secondary' if is_following else 'btn-primary' }}">
+              {{ 'Following ✓' if is_following else 'Follow' }}
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    {% if profile_user.id != current_user.id %}
+      <div class="card shadow-sm whisper-card mb-4">
+        <div class="card-body">
+          <form method="post" action="{{ url_for('whispers.create') }}">
+            {{ whisper_form.csrf_token }}
+            <label class="form-label fw-semibold" for="body">Whisper to {{ profile_user.first_name }}'s wall 🤫</label>
+            <textarea class="form-control mb-2" id="body" name="body" rows="2" maxlength="280" required
+                      placeholder="5-280 characters, encrypted before it's stored..."></textarea>
+            <button class="btn btn-primary btn-sm">Whisper it</button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+    {% for item in feed %}
+      <div class="card shadow-sm whisper-card mb-3">
+        <div class="card-body">
+          <div class="text-muted small mb-1">{{ item.model.created_at.strftime('%b %d, %Y at %H:%M') }}</div>
+          <p class="mb-2 fs-5">{{ item.body }}</p>
+          <div class="d-flex align-items-center gap-3">
+            <form method="post" action="{{ url_for('whispers.toggle_like', whisper_id=item.model.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-outline-danger">
+                {% if item.model.liked_by(current_user.id) %}❤️{% else %}🤍{% endif %}
+                {{ item.model.like_count }}
+              </button>
+            </form>
+            {% if item.model.author_id == current_user.id %}
+              <form method="post" action="{{ url_for('whispers.delete', whisper_id=item.model.id) }}"
+                    onsubmit="return confirm('Delete this whisper?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-secondary">🗑️ Delete</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted">No whispers yet. 🤫</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

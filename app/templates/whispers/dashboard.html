@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Whisper 🤫{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm whisper-card mb-4">
+      <div class="card-body">
+        <form method="post" action="{{ url_for('whispers.create') }}">
+          {{ form.csrf_token }}
+          <label class="form-label fw-semibold" for="body">What's your whisper? 🤫</label>
+          <textarea class="form-control" id="body" name="body" rows="3" maxlength="280"
+                    placeholder="5-280 characters, encrypted before it's stored..." required></textarea>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <small class="text-muted">🔐 Encrypted with your personal key</small>
+            <button class="btn btn-primary">Whisper it</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% for item in feed %}
+      <div class="card shadow-sm whisper-card mb-3">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <img src="{{ item.model.author | avatar }}" class="rounded-circle me-2" width="40" height="40" alt="">
+            <div>
+              <a href="{{ url_for('users.profile', user_id=item.model.author_id) }}" class="fw-semibold text-decoration-none">
+                {{ item.model.author.full_name }}
+              </a>
+              <div class="text-muted small">{{ item.model.created_at.strftime('%b %d, %Y at %H:%M') }}</div>
+            </div>
+          </div>
+          <p class="mb-2 fs-5">{{ item.body }}</p>
+          <div class="d-flex align-items-center gap-3">
+            <form method="post" action="{{ url_for('whispers.toggle_like', whisper_id=item.model.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-outline-danger">
+                {% if item.model.liked_by(current_user.id) %}❤️{% else %}🤍{% endif %}
+                {{ item.model.like_count }}
+              </button>
+            </form>
+            {% if item.model.author_id == current_user.id %}
+              <form method="post" action="{{ url_for('whispers.delete', whisper_id=item.model.id) }}"
+                    onsubmit="return confirm('Delete this whisper?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-secondary">🗑️ Delete</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted">No whispers yet — follow some ninjas 🥷 or write the first one!</p>
+    {% endfor %}
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm whisper-card">
+      <div class="card-body">
+        <h5 class="card-title">{{ current_user.full_name }}</h5>
+        <img src="{{ current_user | avatar }}" class="rounded-circle mb-2" width="80" height="80" alt="">
+        <p class="card-text text-muted">{{ current_user.bio or "No bio yet — add one from your profile!" }}</p>
+        <a href="{{ url_for('users.profile', user_id=current_user.id) }}" class="btn btn-outline-primary btn-sm">My profile</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

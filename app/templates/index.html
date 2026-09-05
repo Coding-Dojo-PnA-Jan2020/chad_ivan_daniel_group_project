@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Whisper 🤫 — share a secret{% endblock %}
+{% block content %}
+<div class="row align-items-center g-5">
+  <div class="col-lg-6">
+    <h1 class="display-4">Whisper 🤫</h1>
+    <p class="lead">
+      Share encrypted whispers with the people you follow. Messages are
+      end-to-end encrypted with per-user keys that never touch the database.
+    </p>
+    <ul class="list-unstyled fs-5">
+      <li>🔐 Whisper-level encryption</li>
+      <li>🥷 Follow your favorite ninjas</li>
+      <li>❤️ Like what resonates</li>
+    </ul>
+    <a class="btn btn-primary btn-lg me-2" href="{{ url_for('auth.register') }}">Get started</a>
+    <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('auth.login') }}">Log in</a>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow whisper-card">
+      <div class="card-body">
+        {% include "auth/_auth_tabs.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

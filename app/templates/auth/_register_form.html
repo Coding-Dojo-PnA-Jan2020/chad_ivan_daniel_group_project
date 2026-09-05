@@ -1,0 +1,32 @@
+{% from "auth/_login_form.html" import field_errors %}
+
+<form method="post" action="{{ url_for('auth.register') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label class="form-label" for="fname">First name</label>
+    <input class="form-control" id="fname" name="first_name" required minlength="2" maxlength="45" value="{{ form.first_name.data if form else '' }}">
+    {{ field_errors(form.first_name if form else None) }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="lname">Last name</label>
+    <input class="form-control" id="lname" name="last_name" required minlength="2" maxlength="45" value="{{ form.last_name.data if form else '' }}">
+    {{ field_errors(form.last_name if form else None) }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="email">Email</label>
+    <input class="form-control" id="email" name="email" type="email" required maxlength="255" value="{{ form.email.data if form else '' }}">
+    {{ field_errors(form.email if form else None) }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="password">Password</label>
+    <input class="form-control" id="password" name="password" type="password" required minlength="8" maxlength="128">
+    <div class="form-text">At least 8 characters.</div>
+    {{ field_errors(form.password if form else None) }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="confirm">Confirm password</label>
+    <input class="form-control" id="confirm" name="confirm" type="password" required>
+    {{ field_errors(form.confirm if form else None) }}
+  </div>
+  <button class="btn btn-primary w-100">Create account</button>
+</form>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Sign up — Whisper 🤫{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow whisper-card">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-3">Join Whisper 🤫</h1>
+        {% include "auth/_register_form.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

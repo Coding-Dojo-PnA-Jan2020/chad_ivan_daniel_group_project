@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Choose a new password — Whisper 🤫{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow whisper-card">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-3">Choose a new password 🔒</h1>
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label class="form-label" for="password">New password</label>
+            <input class="form-control" id="password" name="password" type="password" required minlength="8" maxlength="128">
+            <div class="form-text">At least 8 characters.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="confirm">Confirm password</label>
+            <input class="form-control" id="confirm" name="confirm" type="password" required>
+          </div>
+          <button class="btn btn-primary w-100">Update password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
