@@ -14,3 +14,13 @@ Pillow==13.0.0
 gunicorn==26.2.0
 PyMySQL==1.2.3
 python-dotenv==1.2.4
+# urllib3 is not a direct dependency of the app. It reaches the image through
+# the vendored copy inside pip (pip vendors urllib3), which ships in the
+# python:3.13-slim base image and which the Trivy image scan reports: 2.7.0
+# carries CVE-2026-97687 and CVE-2026-97689 (both HIGH, fixed in 2.8.0). Those
+# findings fail the Trivy gate in CI and block Dependabot auto-merge.
+# Installing the real urllib3 2.8.0 into the venv supersedes the vulnerable
+# vendored copy for the scan. Remove this pin once the base image ships a
+# pip bundling urllib3 >= 2.8.0.
+urllib3==2.8.0
+
