@@ -14,3 +14,4 @@ Pillow==13.0.0
 gunicorn==26.2.0
 PyMySQL==1.2.3
 python-dotenv==1.2.4
+
