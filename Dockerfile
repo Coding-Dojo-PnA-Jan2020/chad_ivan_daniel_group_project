@@ -14,6 +14,15 @@ RUN python -m venv /opt/venv \
 # ---- runtime stage: minimal image, non-root user -------------------------
 FROM python:3.13-slim
 
+# Apply Debian security updates over the base image. Without this the runtime
+# image keeps the base image's OS packages until Docker Hub refreshes
+# python:3.13-slim, and the Trivy gate fails in the meantime on OS CVEs that
+# already have fixes (zlib1g CVE-2026-85091, fixed in 1+deb13u1, blocked the
+# Dependabot PRs #82 and #83 on 2026-11-17).
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+
 LABEL org.opencontainers.image.title="Whisper" \
       org.opencontainers.image.description="Encrypted whisper social app" \
       org.opencontainers.image.source="https://github.com/Coding-Dojo-PnA-Jan2020/chad_ivan_daniel_group_project"
