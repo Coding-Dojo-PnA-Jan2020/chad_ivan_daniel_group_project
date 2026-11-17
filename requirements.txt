@@ -12,6 +12,6 @@ email-validator==2.3.0
 cryptography==50.0.2
 Pillow==13.0.0
 gunicorn==26.2.0
-PyMySQL==1.2.3
+PyMySQL==1.2.4
 python-dotenv==1.2.4
 
